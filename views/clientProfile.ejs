@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClientProfilePage</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Home css -->
+  <link href="home/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="my-css/style.css">
+  <link rel="stylesheet" href="client-dashboard-css/style.css">
+
+  <style>
+    .client-Profile-main {
+      display: flex;
+      justify-content: center;
+      margin: 20px;
+      /* border: 1px solid red; */
+    }
+
+    .profile-card {
+      width: 100%;
+      max-width: 30%;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-card .title {
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .profile-pic {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .profile-img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #14a800;
+    }
+
+    .profile-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .profile-list li {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      font-size: 15px;
+      color: #444;
+    }
+
+    .profile-list li strong {
+      color: #222;
+      margin-right: 5px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .badge.primary {
+      background: #007bff;
+    }
+
+    .badge.success {
+      background: #28a745;
+    }
+
+    .badge.warning {
+      background: #ffc107;
+      color: #000;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      margin-top: 15px;
+      background: #14a800;
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0e7b02;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <%-include("./layouts/clientDashboardNavber") %>
+    <div class="client-Profile-main">
+      <div class="profile-card">
+        <h4 class="title">Profile Details</h4>
+        <div class="profile-pic">
+          <% if (user.profilePic && user.profilePic.trim() !=='' ) { %>
+            <img src="<%= user.profilePic %>" alt="Profile Picture" class="profile-img" />
+            <% } else { %>
+              <img src="/img/user.jpg" alt="Default Profile Picture" class="profile-img" />
+              <% } %>
+        </div>
+
+        <ul class="profile-list">
+          <li>
+            <strong>Email:</strong>
+            <%= user.email %>
+          </li>
+          <li>
+            <strong>Phone:</strong>
+            <%= user.phone %>
+          </li>
+          <li>
+            <strong>Role:</strong>
+            <span class="badge primary">
+              <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+            </span>
+          </li>
+          <li>
+            <strong>Verified:</strong>
+            <% if (user.is_verified) { %>
+              <span class="badge success">Yes</span>
+              <% } else { %>
+                <span class="badge warning">No</span>
+                <% } %>
+          </li>
+          <% if (user.city && user.city.trim() !=='' ) { %>
+            <li>
+              <strong>City:</strong>
+              <%= user.city %>
+            </li>
+            <% } %>
+              <% if (user.state && user.state.trim() !=='' ) { %>
+                <li>
+                  <strong>State:</strong>
+                  <%= user.state %>
+                </li>
+                <% } %>
+                  <% if (user.country && user.country.trim() !=='' ) { %>
+                    <li>
+                      <strong>Country:</strong>
+                      <%= user.country %>
+                    </li>
+                    <% } %>
+                      <li>
+                        <strong>Joined:</strong>
+                        <%= user.createdAt.toDateString() %>
+                      </li>
+        </ul>
+        <a href="/clientProfileEditForm/" class="btn">Edit Profile</a>
+      </div>
+    </div>
+
+    <footer>
+      <%-include("./layouts/footer") %>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Sidebar Toggle Functionality
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const toggleBtn = document.getElementById('toggleSidebar');
+
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+      });
+
+      // Mobile Sidebar Toggle
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('mobile-open');
+      }
+
+      // Delete Job Modal Function
+      function showDeleteModal(jobId, jobTitle) {
+        document.getElementById('jobTitle').textContent = jobTitle;
+        document.getElementById('deleteJobForm').action = `/jobs/delete/${jobId}`;
+        new bootstrap.Modal(document.getElementById('deleteJobModal')).show();
+      }
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+
+      // Auto-hide flash messages after 5 seconds
+      setTimeout(() => {
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(message => {
+          message.style.opacity = '0';
+          setTimeout(() => message.remove(), 300);
+        });
+      }, 5000);
+    </script>
+
+</body>
+
+</html>

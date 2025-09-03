@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <!-- Libraries Stylesheet -->
+  <link href="home/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="home/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="home/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="my-css/style.css">
+</head>
+
+<body data-auth="<%= isAuthenticated ? 'true' : 'false' %>">
+
+  <!-- NAVBAR -->
+  <%-include("./layouts/navbar") %>
+    <%-include("./layouts/flash") %>
+
+      <!-- HERO SECTION -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1>Connecting clients in need to freelancers who deliver</h1>
+          <p>World-class talent at your fingertips</p>
+          <div class="search-box">
+            <input type="text" placeholder="Search for freelancers, jobs..." />
+            <button>Search</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Freelancer Section -->
+      <section class="freelancers-section">
+        <h2>Freelancers</h2>
+        <div class="freelancers-grid">
+          <% freelancers.forEach((freelancer)=> { %>
+            <div class="freelancer-card">
+              <img src="<%= freelancer.profilePic || '/home/img/team-1.jpg' %>" alt="Freelancer Image"
+                class="freelancer-img">
+              <div class="freelancer-body">
+                <h3 class="freelancer-name">
+                  <%= freelancer.name %>
+                </h3>
+                <p class="freelancer-skills">
+                  <%= freelancer.skills %>
+                </p>
+
+                <% if (!isAuthenticated) { %>
+                  <button class="btn-details" onclick="showAuthMessage()">Details</button>
+                  <% } else { %>
+                    <a href="/freelancer/<%= freelancer._id %>" class="btn-details">Details</a>
+                    <% } %>
+              </div>
+            </div>
+            <% }) %>
+        </div>
+      </section>
+
+      <script>
+        function showAuthMessage() {
+          // Create a flash message element
+          const flashDiv = document.createElement('div');
+          flashDiv.className = 'alert alert-warning alert-dismissible fade show';
+          flashDiv.innerHTML = `
+      You need to authenticate to view freelancer details.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    `;
+
+          // Insert at the top of the body
+          document.body.insertBefore(flashDiv, document.body.firstChild);
+
+          // Auto-remove after 5 seconds
+          setTimeout(() => {
+            if (flashDiv.parentNode) {
+              flashDiv.remove();
+            }
+          }, 5000);
+        }
+      </script>
+
+      <!-- Job Section -->
+      <section id="jobs" class="jobs">
+        <h2>Featured Jobs</h2>
+        <div class="grid">
+          <% if (openJobs && openJobs.length) { %>
+            <% openJobs.forEach(function(job){ %>
+              <div class="job-card">
+                <div class="job-card-header">
+                  <h3>
+                    <%= job.title %>
+                  </h3>
+                  <span class="job-type">
+                    <%= job.isUrgent ? 'Urgent' : 'Open' %>
+                  </span>
+                </div>
+                <ul class="job-meta">
+                  <li>$<%= job.budget && job.budget.min %> - $<%= job.budget && job.budget.max %>
+                  </li>
+                  <li>
+                    <%= job.experienceLevel %>
+                  </li>
+                  <% if (job.deadline) { %>
+                    <li>Deadline: <%= new Date(job.deadline).toLocaleDateString() %>
+                    </li>
+                    <% } %>
+                </ul>
+                <button class="btn-view" type="button" data-job-id="<%= job._id %>">View</button>
+              </div>
+              <% }); %>
+                <% } else { %>
+                  <h1>No open jobs at the moment.</h1>
+                  <% } %>
+        </div>
+      </section>
+
+      <!-- View button auth guard for Job and Smooth scroll -->
+      <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector(this.getAttribute('href')).scrollIntoView({
+              behavior: 'smooth'
+            });
+          });
+        });
+
+        // View button auth guard for Job
+        (function () {
+          var isAuthenticated = document.body.dataset.auth === 'true';
+          var buttons = document.querySelectorAll('.btn-view');
+          buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              if (!isAuthenticated) {
+                // Create a flash message element
+                const flashDiv = document.createElement('div');
+                flashDiv.className = 'alert alert-warning alert-dismissible fade show';
+                flashDiv.innerHTML = `
+              You need to authenticate to view job details.
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            `;
+
+                // Insert at the top of the body
+                document.body.insertBefore(flashDiv, document.body.firstChild);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                  if (flashDiv.parentNode) {
+                    flashDiv.remove();
+                  }
+                }, 5000);
+                return;
+              }
+            });
+          });
+        })();
+      </script>
+
+      <!-- Ready to get started Section -->
+      <section class="cta">
+        <div class="cta-inner">
+          <h2>Ready to get started?</h2>
+          <p>Join thousands of businesses hiring top freelancers today.</p>
+          <button class="btn-cta" type="button">Join Now</button>
+        </div>
+      </section>
+
+      <!-- What Clients Say Section -->
+      <section id="testimonials" class="testimonials">
+        <h2>What Clients Say</h2>
+        <div class="owl-carousel testimonial-carousel">
+          <div class="testimonial-item">
+            <div class="testimonial-content">
+              <p>“Amazing experience! The freelancer delivered on time and exceeded expectations.”</p>
+              <div class="author">
+                <img src="home/img/team-3.jpg" alt="Photo of Alex R." />
+                <div class="author-meta">
+                  <strong>Alex R.</strong>
+                  <span>Product Manager</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-item">
+            <div class="testimonial-content">
+              <p>“This platform connects you with real professionals. Highly recommended!”</p>
+              <div class="author">
+                <img src="home/img/testimonial-1.jpg" alt="Photo of Priya D." />
+                <div class="author-meta">
+                  <strong>Priya D.</strong>
+                  <span>Startup Founder</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-item">
+            <div class="testimonial-content">
+              <p>“Great communication and results. We will definitely hire again.”</p>
+              <div class="author">
+                <img src="home/img/testimonial-2.jpg" alt="Photo of Samuel L." />
+                <div class="author-meta">
+                  <strong>Samuel L.</strong>
+                  <span>Agency Owner</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <%-include("./layouts/footer") %>
+      </footer>
+      
+      <!-- JavaScript Libraries -->
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+      <script src="home/lib/easing/easing.min.js"></script>
+      <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+      <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+      <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+      <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+      <!-- Contact Javascript File -->
+      <script src="home/mail/jqBootstrapValidation.min.js"></script>
+      <script src="home/mail/contact.js"></script>
+
+      <!-- Template Javascript -->
+      <script src="home/js/main.js"></script>
+</body>
+
+</html>

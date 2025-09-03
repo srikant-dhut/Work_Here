@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jobSearch</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/my-css/style.css">
+  <link href="/home/css/style.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+  <link rel="stylesheet" href="/freelancer-nav-css/style.css">
+</head>
+<body>
+  <!-- <%-include("./layouts/navbar") %> -->
+   <%-include("./layouts/FreelancerDashboardNavber") %>
+
+  <div style="margin-top: 100px;" class="container main-content">
+    <div class="row container-fluid">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-header">
+            <h5>Filters</h5>
+          </div>
+          <div class="card-body">
+            <form method="GET" action="/freelancer/jobs">
+              <div class="mb-3">
+                <label class="form-label">Keyword</label>
+                <input type="text" name="keyword" class="form-control" value="<%= (searchParams && searchParams.keyword) || '' %>" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Skills (comma separated)</label>
+                <input type="text" name="skills" class="form-control" value="<%= (searchParams && searchParams.skills) || '' %>" />
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Min Budget</label>
+                    <input type="number" name="minBudget" class="form-control" value="<%= (searchParams && searchParams.minBudget) || '' %>" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Max Budget</label>
+                    <input type="number" name="maxBudget" class="form-control" value="<%= (searchParams && searchParams.maxBudget) || '' %>" />
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Experience Level</label>
+                <select name="experienceLevel" class="form-select">
+                  <option value="">Any</option>
+                  <option value="entry" <%= (searchParams && searchParams.experienceLevel==='entry')?'selected':'' %>>Entry</option>
+                  <option value="intermediate" <%= (searchParams && searchParams.experienceLevel==='intermediate')?'selected':'' %>>Intermediate</option>
+                  <option value="expert" <%= (searchParams && searchParams.experienceLevel==='expert')?'selected':'' %>>Expert</option>
+                </select>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="isUrgent" value="true" <%= (searchParams && searchParams.isUrgent==='true')?'checked':'' %> />
+                <label class="form-check-label">Urgent Only</label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-9">
+        <div class="card">
+          <div class="card-header">
+            <h5>Available Jobs</h5>
+          </div>
+          <div class="card-body">
+            <% if (jobs.length === 0) { %>
+              <div class="text-center text-muted">No jobs found. Try adjusting your filters.</div>
+            <% } else { %>
+              <% jobs.forEach(job => { %>
+                <div class="border-bottom pb-3 mb-3">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <h6 class="mb-1"><a href="/freelancer/jobs/<%= job._id %>"><%= job.title %></a></h6>
+                      <div class="text-muted small mb-2"><%= job.description.substring(0, 120) %>...</div>
+                      <div class="d-flex flex-wrap gap-2">
+                        <% job.skills.slice(0, 5).forEach(skill => { %>
+                          <span class="badge bg-light text-dark"><%= skill %></span>
+                        <% }) %>
+                      </div>
+                    </div>
+                    <div class="text-end">
+                      <div class="fw-bold text-primary">$<%= job.budget.min %> - $<%= job.budget.max %></div>
+                      <div class="small text-muted">
+                        <i class="fas fa-user me-1"></i> Client: <%= job.client.name %>
+                      </div>
+                      <% if (job.isUrgent) { %>
+                        <span class="badge bg-danger mt-1">Urgent</span>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+  <div class="container-fluid">
+      <%-include("./layouts/footer") %>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Site scripts (absolute paths) -->
+  <script src="/home/js/main.js"></script>
+  <script src="/my-js/script.js"></script>
+  <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="home/lib/easing/easing.min.js"></script>
+    <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="home/mail/jqBootstrapValidation.min.js"></script>
+    <script src="home/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="home/js/main.js"></script>
+
+
+     <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const toggleIcon = sidebarToggle.querySelector('i');
+
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+          
+          if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.className = 'fas fa-chevron-right';
+          } else {
+            toggleIcon.className = 'fas fa-chevron-left';
+          }
+        });
+
+        // Mobile sidebar toggle
+        mobileToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('show');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          if (window.innerWidth <= 768) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMobileToggle = mobileToggle.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnMobileToggle) {
+              sidebar.classList.remove('show');
+            }
+          }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+          }
+        });
+
+        // Add active class to current nav item
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        // Smooth hover effects
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+          });
+          
+          item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Top Navbar Dropdown Functionality
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const messagesBtn = document.getElementById('messagesBtn');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        const messagesDropdown = document.getElementById('messagesDropdown');
+        const userDropdown = document.getElementById('userDropdown');
+
+        // Notifications dropdown
+        notificationsBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          notificationsDropdown.classList.toggle('show');
+          messagesDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // Messages dropdown
+        messagesBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          messagesDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // User menu dropdown
+        userMenuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          userDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          messagesDropdown.classList.remove('show');
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!notificationsBtn.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+            notificationsDropdown.classList.remove('show');
+          }
+          if (!messagesBtn.contains(event.target) && !messagesDropdown.contains(event.target)) {
+            messagesDropdown.classList.remove('show');
+          }
+          if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.remove('show');
+          }
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        searchBtn.addEventListener('click', function() {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            // Redirect to search page or perform search
+            window.location.href = `/freelancer/jobs?search=${encodeURIComponent(searchTerm)}`;
+          }
+        });
+
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchBtn.click();
+          }
+        });
+
+        // Mark all notifications as read
+        const markAllReadBtn = document.querySelector('.mark-all-read');
+        if (markAllReadBtn) {
+          markAllReadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            unreadItems.forEach(item => {
+              item.classList.remove('unread');
+            });
+            
+            // Update notification badge
+            const notificationBadge = notificationsBtn.querySelector('.notification-badge');
+            if (notificationBadge) {
+              notificationBadge.textContent = '0';
+              notificationBadge.style.display = 'none';
+            }
+          });
+        }
+
+        // Add hover effects to dropdown items
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+          });
+          
+          item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Add smooth animations to notification items
+        const notificationItems = document.querySelectorAll('.notification-item, .message-item');
+        notificationItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.1}s`;
+          item.classList.add('fade-in');
+        });
+      });
+    </script>
+</body>
+</html>

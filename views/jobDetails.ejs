@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobDetails</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <link rel="stylesheet" href="/my-css/style.css">
+  <link href="/home/css/style.css" rel="stylesheet" />
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+  <link rel="stylesheet" href="/freelancer-nav-css/style.css">
+</head>
+
+<body>
+  <!-- navber -->
+  <%-include("./layouts/FreelancerDashboardNavber") %>
+
+    <!-- main Body -->
+    <div style="margin-top: 100px;" class="container main-content">
+      <div class="row container-fluid">
+        <div class="col-md-8">
+          <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h3 class="mb-0">
+                <%= job.title %>
+              </h3>
+              <% if (job.isUrgent) { %>
+                <span class="badge bg-danger">Urgent</span>
+                <% } %>
+            </div>
+            <div class="card-body">
+              <p class="text-muted">
+                <%= job.description %>
+              </p>
+              <div class="mb-2">
+                <strong>Skills:</strong>
+                <% job.skills.forEach(skill=> { %>
+                  <span class="badge bg-light text-dark me-1">
+                    <%= skill %>
+                  </span>
+                  <% }) %>
+              </div>
+              <p><strong>Budget:</strong> $<%= job.budget.min %> - $<%= job.budget.max %> (<%= job.budget.currency %>)
+              </p>
+              <p><strong>Experience Level:</strong>
+                <%= job.experienceLevel %>
+              </p>
+              <p><strong>Deadline:</strong>
+                <%= job.deadline.toDateString() %>
+              </p>
+              <p><strong>Status:</strong> <span class="badge bg-<%= job.status === 'open' ? 'success' : 'secondary' %>">
+                  <%= job.status %>
+                </span></p>
+            </div>
+          </div>
+
+          <% if (existingBid) { %>
+            <div class="alert alert-info">
+              You have already placed a bid on this job.
+            </div>
+            <% } else if (job.status==='open' ) { %>
+              <div class="card">
+                <div class="card-header">
+                  <h5>Submit Your Bid</h5>
+                </div>
+                <div class="card-body">
+                  <form action="/freelancer/jobs/<%= job._id %>/bid" method="POST">
+                    <div class="mb-3">
+                      <label class="form-label">Proposal Message</label>
+                      <textarea name="proposal" class="form-control" rows="4" minlength="5" maxlength="150" required
+                        oninput="updateCount(this)"></textarea>
+                      <small id="charCount">150 Remaining</small>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label">Bid Amount ($)</label>
+                          <input type="number" name="bidAmount" class="form-control" min="1" required />
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="mb-3">
+                          <label class="form-label">Estimated Delivery Date</label>
+                          <input type="date" name="estimatedDelivery"
+                            min="<%= new Date().toISOString().substring(0,10) %>" class="form-control" required />
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-paper-plane me-1"></i>Submit Bid
+                    </button>
+                  </form>
+                </div>
+              </div>
+              <% } %>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h6>Client Details</h6>
+            </div>
+            <div class="card-body">
+              <p class="mb-1"><strong>Name:</strong>
+                <%= job.client.name %>
+              </p>
+              <p class="mb-0"><strong>Email:</strong>
+                <%= job.client.email %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="main-content">
+  <div class="container-fluid">
+      <%-include("./layouts/footer") %>
+  </div>
+
+    <script>
+      function updateCount(textarea) {
+        const max = textarea.getAttribute("maxlength");
+        const currentLength = textarea.value.length;
+        const remaining = max - currentLength;
+
+        document.getElementById("charCount").textContent =
+          remaining + " Remaining";
+      }
+    </script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const toggleIcon = sidebarToggle.querySelector('i');
+
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function () {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+
+          if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.className = 'fas fa-chevron-right';
+          } else {
+            toggleIcon.className = 'fas fa-chevron-left';
+          }
+        });
+
+        // Mobile sidebar toggle
+        mobileToggle.addEventListener('click', function () {
+          sidebar.classList.toggle('show');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function (event) {
+          if (window.innerWidth <= 768) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMobileToggle = mobileToggle.contains(event.target);
+
+            if (!isClickInsideSidebar && !isClickOnMobileToggle) {
+              sidebar.classList.remove('show');
+            }
+          }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+          if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+          }
+        });
+
+        // Add active class to current nav item
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        // Smooth hover effects
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          item.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateX(5px)';
+          });
+
+          item.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Top Navbar Dropdown Functionality
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const messagesBtn = document.getElementById('messagesBtn');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        const messagesDropdown = document.getElementById('messagesDropdown');
+        const userDropdown = document.getElementById('userDropdown');
+
+        // Notifications dropdown
+        notificationsBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          notificationsDropdown.classList.toggle('show');
+          messagesDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // Messages dropdown
+        messagesBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          messagesDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // User menu dropdown
+        userMenuBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          userDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          messagesDropdown.classList.remove('show');
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function (event) {
+          if (!notificationsBtn.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+            notificationsDropdown.classList.remove('show');
+          }
+          if (!messagesBtn.contains(event.target) && !messagesDropdown.contains(event.target)) {
+            messagesDropdown.classList.remove('show');
+          }
+          if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.remove('show');
+          }
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        searchBtn.addEventListener('click', function () {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            // Redirect to search page or perform search
+            window.location.href = `/freelancer/jobs?search=${encodeURIComponent(searchTerm)}`;
+          }
+        });
+
+        searchInput.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter') {
+            searchBtn.click();
+          }
+        });
+
+        // Mark all notifications as read
+        const markAllReadBtn = document.querySelector('.mark-all-read');
+        if (markAllReadBtn) {
+          markAllReadBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            unreadItems.forEach(item => {
+              item.classList.remove('unread');
+            });
+
+            // Update notification badge
+            const notificationBadge = notificationsBtn.querySelector('.notification-badge');
+            if (notificationBadge) {
+              notificationBadge.textContent = '0';
+              notificationBadge.style.display = 'none';
+            }
+          });
+        }
+
+        // Add hover effects to dropdown items
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+          item.addEventListener('mouseenter', function () {
+            this.style.transform = 'translateX(5px)';
+          });
+
+          item.addEventListener('mouseleave', function () {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Add smooth animations to notification items
+        const notificationItems = document.querySelectorAll('.notification-item, .message-item');
+        notificationItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.1}s`;
+          item.classList.add('fade-in');
+        });
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="home/lib/easing/easing.min.js"></script>
+    <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="home/mail/jqBootstrapValidation.min.js"></script>
+    <script src="home/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="home/js/main.js"></script>
+</body>
+
+</html>

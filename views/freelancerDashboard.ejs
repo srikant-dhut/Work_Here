@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreelancerDashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="/my-css/style.css">
+  <link href="/home/css/style.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+  <link rel="stylesheet" href="/freelancer-nav-css/style.css">
+</head>
+<body>
+  <!-- navber here -->
+   <%-include("./layouts/FreelancerDashboardNavber") %>
+
+    <%-include("./layouts/flash") %>
+  <div class="main-content" id="mainContent">
+    <h5 style="visibility: hidden;">Srikant Dhut</h5>
+    <div class="container-fluid">
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-briefcase fa-2x text-primary mb-2"></i>
+            <h4><%= availableJobs.length %></h4>
+            <p class="text-muted mb-0">Available Jobs</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-paper-plane fa-2x text-warning mb-2"></i>
+            <h4><%= activeBids.filter(b => b.status === 'pending').length %></h4>
+            <p class="text-muted mb-0">Pending Bids</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center">
+          <div class="card-body">
+            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+            <h4><%= activeBids.filter(b => b.status === 'accepted').length %></h4>
+            <p class="text-muted mb-0">Accepted Bids</p>
+          </div>
+        </div>
+      </div>
+             <div class="col-md-3">
+         <div class="card text-center">
+           <div class="card-body">
+             <i class="fas fa-tasks fa-2x text-info mb-2"></i>
+             <h4><%= acceptedJobs.filter(job => job.status === 'in-progress').length %></h4>
+             <p class="text-muted mb-0">Active Projects</p>
+           </div>
+         </div>
+       </div>
+    </div>
+
+    <div class="row">
+      <!-- Available Jobs -->
+      <div class="col-md-8">
+        <div class="card">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-search me-2"></i>Available Jobs</h5>
+            <a href="/freelancer/jobs" class="btn btn-outline-primary btn-sm">View All Jobs</a>
+          </div>
+          <div class="card-body">
+            <% if (availableJobs.length === 0) { %>
+              <div class="text-center py-4">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <p class="text-muted fs-6">No available jobs at the moment.</p>
+                <p class="text-muted fs-6">Check back later for new opportunities!</p>
+              </div>
+            <% } else { %>
+              <% availableJobs.slice(0, 5).forEach(job => { %>
+                <div class="job-item border-bottom pb-3 mb-3">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fs-5">
+                        <a href="/freelancer/jobs/<%= job._id %>" class="text-decoration-none">
+                          <%= job.title %>
+                        </a>
+                      </h6>
+                      <p class="text-muted small mb-2 fs-6"><%= job.description.substring(0, 100) %>...</p>
+                      <div class="d-flex flex-wrap gap-2">
+                        <% job.skills.slice(0, 3).forEach(skill => { %>
+                          <span class="badge bg-light text-dark fs-6"><%= skill %></span>
+                        <% }) %>
+                        <% if (job.skills.length > 3) { %>
+                          <span class="badge bg-light text-dark">+<%= job.skills.length - 3 %> more</span>
+                        <% } %>
+                      </div>
+                    </div>
+                    <div class="text-end ms-3">
+                      <div class="text-primary fw-bold">$<%= job.budget.min %> - $<%= job.budget.max %></div>
+                      <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        <%= Math.ceil((new Date(job.deadline) - new Date()) / (1000 * 60 * 60 * 24)) %> days left
+                      </small>
+                      <% if (job.isUrgent) { %>
+                        <div class="mt-1">
+                          <span class="badge bg-danger">Urgent</span>
+                        </div>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Bids & Projects -->
+      <div class="col-md-4">
+        <!-- Active Bids -->
+        <div class="card mb-3">
+          <div class="card-header">
+            <h6><i class="fas fa-paper-plane me-2"></i>Your Active Bids</h6>
+          </div>
+          <div class="card-body">
+            <% if (activeBids.length === 0) { %>
+              <p class="text-muted small ">No active bids yet.</p>
+            <% } else { %>
+              <% activeBids.slice(0, 3).forEach(bid => { %>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <small class="fw-bold fs-6"><%= bid.job.title %></small>
+                    <!-- <div class="text-muted small">$<%= bid.bidAmount %></div> -->
+                  </div>
+                  <span class="badge bg-<%= bid.status === 'pending' ? 'warning' : 'success' %>">
+                    <%= bid.status.charAt(0).toUpperCase() + bid.status.slice(1) %>
+                  </span>
+                </div>
+              <% }) %>
+              <% if (activeBids.length > 3) { %>
+                <a href="/freelancer/bids" class="btn btn-primary btn-sm w-100 mt-2">View All Bids</a>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+
+                 <!-- Active Projects -->
+         <div class="card">
+           <div class="card-header">
+             <h6><i class="fas fa-tasks me-2"></i>Active Projects</h6>
+           </div>
+           <div class="card-body">
+             <% 
+               const inProgressJobs = acceptedJobs.filter(job => job.status === 'in-progress');
+             %>
+             <% if (inProgressJobs.length === 0) { %>
+               <p class="text-muted small fs-6">No active projects yet.</p>
+             <% } else { %>
+               <% inProgressJobs.forEach(job => { %>
+                 <div class="d-flex justify-content-between align-items-center mb-2">
+                   <div>
+                     <small class="fw-bold fs-6"><%= job.title %></small>
+                     <div class="text-muted small fs-6">Client: <%= job.client.name %></div>
+                   </div>
+                   <a href="/freelancer/messages/<%= job._id %>" class="btn btn-outline-primary btn-sm">
+                     <i class="fas fa-comments"></i>
+                   </a>
+                 </div>
+               <% }) %>
+               <!-- <% if (inProgressJobs.length > 3) { %>
+                 <a href="/freelancer/projects" class="btn btn-primary btn-sm w-100 mt-2">View All Projects</a>
+               <% } %> -->
+             <% } %>
+           </div>
+         </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-3 text-center mb-3">
+                <a href="/freelancer/jobs" class="btn btn-outline-primary btn-lg w-100">
+                  <i class="fas fa-search fa-2x mb-2 d-block"></i>
+                  Browse Jobs
+                </a>
+              </div>
+              <div class="col-md-3 text-center mb-3">
+                <a href="/freelancer/bids" class="btn btn-outline-warning btn-lg w-100">
+                  <i class="fas fa-paper-plane fa-2x mb-2 d-block"></i>
+                  My Bids
+                </a>
+              </div>
+                             <div class="col-md-3 text-center mb-3">
+                 <a href="/messages/inbox/freelancer" class="btn btn-outline-info btn-lg w-100">
+                   <i class="fas fa-envelope fa-2x mb-2 d-block"></i>
+                   Messages
+                 </a>
+               </div>
+              <div class="col-md-3 text-center mb-3">
+                <a href="/freelancer/profile" class="btn btn-outline-success btn-lg w-100">
+                  <i class="fas fa-user-edit fa-2x mb-2 d-block"></i>
+                  Edit Profile
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Completed Projects -->
+  <div class="row mt-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-trophy me-2"></i>Completed Projects</h5>
+      </div>
+      <div class="card-body">
+        <% if (typeof completedJobs !== 'undefined' && completedJobs.length > 0) { %>
+          <div class="row">
+            <% completedJobs.forEach(job => { %>
+              <div class="col-md-6 col-lg-3 mb-3">
+                <div class="card h-100 border-success">
+                  <div class="card-body text-center">
+                    <div class="mb-3">
+                      <i class="fas fa-check-circle fa-3x text-success"></i>
+                    </div>
+                    <h6 class="card-title"><%= job.title %></h6>
+                    <p class="card-text small text-muted fs-6">
+                      <strong>Client:</strong> <%= job.client.name %><br>
+                      <strong>Completed:</strong> 
+                      <%= (job.completedAt || job.updatedAt) 
+                          ? new Date(job.completedAt || job.updatedAt).toLocaleDateString() 
+                          : 'N/A' %><br>
+                      <strong>Earnings:</strong> $<%= job.acceptedBid ? job.acceptedBid.bidAmount : 'N/A' %>
+                    </p>
+                    <div class="mt-2">
+                      <span class="badge bg-success">Completed</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <!-- ADD pagination start-->
+          <% if (totalPages > 1) { %>
+            <div class="d-flex justify-content-center mt-3">
+              <nav>
+                <ul class="pagination">
+                  <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                      <a class="page-link" href="/freelancer/dashboard?page=<%= i %>"><%= i %></a>
+                    </li>
+                  <% } %>
+                </ul>
+              </nav>
+            </div>
+          <% } %>
+          <!-- ADD pagination end-->
+        <% } else { %>
+          <div class="text-center py-4">
+            <i class="fas fa-trophy fa-3x text-muted mb-3"></i>
+            <h6 class="text-muted fs-6">No completed projects yet</h6>
+            <p class="text-muted small fs-6">Complete your first project to see it here!</p>
+            <a href="/freelancer/jobs" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-search me-2 fs-6"></i>Find Jobs
+            </a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+<div class="main-content">
+  <div class="container-fluid">
+      <%-include("./layouts/footer") %>
+  </div>
+</div>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Site scripts (absolute paths) -->
+  <script src="/home/js/main.js"></script>
+  <script src="/my-js/script.js"></script>
+
+   <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="home/lib/easing/easing.min.js"></script>
+    <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="home/mail/jqBootstrapValidation.min.js"></script>
+    <script src="home/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="home/js/main.js"></script>
+
+    <!-- Sidebar JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const toggleIcon = sidebarToggle.querySelector('i');
+
+        // Desktop sidebar toggle
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+          
+          if (sidebar.classList.contains('collapsed')) {
+            toggleIcon.className = 'fas fa-chevron-right';
+          } else {
+            toggleIcon.className = 'fas fa-chevron-left';
+          }
+        });
+
+        // Mobile sidebar toggle
+        mobileToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('show');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+          if (window.innerWidth <= 768) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnMobileToggle = mobileToggle.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnMobileToggle) {
+              sidebar.classList.remove('show');
+            }
+          }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+          if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+          }
+        });
+
+        // Add active class to current nav item
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+          if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+
+        // Smooth hover effects
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+          });
+          
+          item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Top Navbar Dropdown Functionality
+        const notificationsBtn = document.getElementById('notificationsBtn');
+        const messagesBtn = document.getElementById('messagesBtn');
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const notificationsDropdown = document.getElementById('notificationsDropdown');
+        const messagesDropdown = document.getElementById('messagesDropdown');
+        const userDropdown = document.getElementById('userDropdown');
+
+        // Notifications dropdown
+        notificationsBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          notificationsDropdown.classList.toggle('show');
+          messagesDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // Messages dropdown
+        messagesBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          messagesDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          userDropdown.classList.remove('show');
+        });
+
+        // User menu dropdown
+        userMenuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          userDropdown.classList.toggle('show');
+          notificationsDropdown.classList.remove('show');
+          messagesDropdown.classList.remove('show');
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+          if (!notificationsBtn.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+            notificationsDropdown.classList.remove('show');
+          }
+          if (!messagesBtn.contains(event.target) && !messagesDropdown.contains(event.target)) {
+            messagesDropdown.classList.remove('show');
+          }
+          if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.remove('show');
+          }
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        const searchBtn = document.querySelector('.search-btn');
+
+        searchBtn.addEventListener('click', function() {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            // Redirect to search page or perform search
+            window.location.href = `/freelancer/jobs?search=${encodeURIComponent(searchTerm)}`;
+          }
+        });
+
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            searchBtn.click();
+          }
+        });
+
+        // Mark all notifications as read
+        const markAllReadBtn = document.querySelector('.mark-all-read');
+        if (markAllReadBtn) {
+          markAllReadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            unreadItems.forEach(item => {
+              item.classList.remove('unread');
+            });
+            
+            // Update notification badge
+            const notificationBadge = notificationsBtn.querySelector('.notification-badge');
+            if (notificationBadge) {
+              notificationBadge.textContent = '0';
+              notificationBadge.style.display = 'none';
+            }
+          });
+        }
+
+        // Add hover effects to dropdown items
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+        dropdownItems.forEach(item => {
+          item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(5px)';
+          });
+          
+          item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+          });
+        });
+
+        // Add smooth animations to notification items
+        const notificationItems = document.querySelectorAll('.notification-item, .message-item');
+        notificationItems.forEach((item, index) => {
+          item.style.animationDelay = `${index * 0.1}s`;
+          item.classList.add('fade-in');
+        });
+      });
+    </script>
+</body>
+</html>

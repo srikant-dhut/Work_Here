@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <link rel="stylesheet" href="/my-css/style.css">
+    <link href="/home/css/style.css" rel="stylesheet" />
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+    <link rel="stylesheet" href="/freelancer-nav-css/style.css">
+
+    <style>
+        .client-Profile-main {
+            width: 85.5%;
+            display: flex;
+            justify-content: center;
+            /* border: 5px solid red; */
+            margin-left: auto;
+            margin-top: 100px;
+
+        }
+
+        .profile-card {
+            width: 100%;
+            max-width: 30%;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-card .title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .profile-pic {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #14a800;
+        }
+
+        .profile-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-list li {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+            color: #444;
+        }
+
+        .profile-list li strong {
+            color: #222;
+            margin-right: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge.primary {
+            background: #007bff;
+        }
+
+        .badge.success {
+            background: #28a745;
+        }
+
+        .badge.warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 15px;
+            background: #14a800;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #14a800;
+        }
+
+        .freelancerAccountfooter {
+            width: 85%;
+            float: right;
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- navber -->
+    <%-include("./layouts/FreelancerDashboardNavber") %>
+        <div class="client-Profile-main main-content">
+            <div class="profile-card container-fluid">
+                <h4 class="title">Profile Details</h4>
+                <div class="profile-pic">
+                    <% if (user.profilePic && user.profilePic.trim() !=='' ) { %>
+                        <img src="<%= user.profilePic %>" alt="Profile Picture" class="profile-img" />
+                        <% } else { %>
+                            <img src="/img/user.jpg" alt="Default Profile Picture" class="profile-img" />
+                            <% } %>
+                </div>
+
+                <ul class="profile-list">
+                    <li>
+                        <strong>Email:</strong>
+                        <%= user.email %>
+                    </li>
+                    <li>
+                        <strong>Phone:</strong>
+                        <%= user.phone %>
+                    </li>
+                    <li>
+                        <strong>Role:</strong>
+                        <span class="badge primary">
+                            <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                        </span>
+                    </li>
+                    <li>
+                        <strong>Verified:</strong>
+                        <% if (user.is_verified) { %>
+                            <span class="badge success">Yes</span>
+                            <% } else { %>
+                                <span class="badge warning">No</span>
+                                <% } %>
+                    </li>
+                    <% if (user.city && user.city.trim() !=='' ) { %>
+                        <li>
+                            <strong>City:</strong>
+                            <%= user.city %>
+                        </li>
+                        <% } %>
+                            <% if (user.state && user.state.trim() !=='' ) { %>
+                                <li>
+                                    <strong>State:</strong>
+                                    <%= user.state %>
+                                </li>
+                                <% } %>
+                                    <% if (user.country && user.country.trim() !=='' ) { %>
+                                        <li>
+                                            <strong>Country:</strong>
+                                            <%= user.country %>
+                                        </li>
+                                        <% } %>
+                                            <li>
+                                                <strong>Joined:</strong>
+                                                <%= user.createdAt.toDateString() %>
+                                            </li>
+                </ul>
+
+                <a href="/freelancerAccountEditForm/" class="btn">Edit Profile</a>
+            </div>
+        </div>
+
+          <div class="main-content">
+  <div class="container-fluid">
+      <%-include("./layouts/footer") %>
+  </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const mobileToggle = document.getElementById('mobileToggle');
+                const toggleIcon = sidebarToggle.querySelector('i');
+
+                // Desktop sidebar toggle
+                sidebarToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+
+                    if (sidebar.classList.contains('collapsed')) {
+                        toggleIcon.className = 'fas fa-chevron-right';
+                    } else {
+                        toggleIcon.className = 'fas fa-chevron-left';
+                    }
+                });
+
+                // Mobile sidebar toggle
+                mobileToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('show');
+                });
+
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function (event) {
+                    if (window.innerWidth <= 768) {
+                        const isClickInsideSidebar = sidebar.contains(event.target);
+                        const isClickOnMobileToggle = mobileToggle.contains(event.target);
+
+                        if (!isClickInsideSidebar && !isClickOnMobileToggle) {
+                            sidebar.classList.remove('show');
+                        }
+                    }
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', function () {
+                    if (window.innerWidth > 768) {
+                        sidebar.classList.remove('show');
+                    }
+                });
+
+                // Add active class to current nav item
+                const currentPath = window.location.pathname;
+                const navLinks = document.querySelectorAll('.nav-link');
+
+                navLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
+                });
+
+                // Smooth hover effects
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateX(5px)';
+                    });
+
+                    item.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateX(0)';
+                    });
+                });
+
+                // Top Navbar Dropdown Functionality
+                const notificationsBtn = document.getElementById('notificationsBtn');
+                const messagesBtn = document.getElementById('messagesBtn');
+                const userMenuBtn = document.getElementById('userMenuBtn');
+                const notificationsDropdown = document.getElementById('notificationsDropdown');
+                const messagesDropdown = document.getElementById('messagesDropdown');
+                const userDropdown = document.getElementById('userDropdown');
+
+                // Notifications dropdown
+                notificationsBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    notificationsDropdown.classList.toggle('show');
+                    messagesDropdown.classList.remove('show');
+                    userDropdown.classList.remove('show');
+                });
+
+                // Messages dropdown
+                messagesBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    messagesDropdown.classList.toggle('show');
+                    notificationsDropdown.classList.remove('show');
+                    userDropdown.classList.remove('show');
+                });
+
+                // User menu dropdown
+                userMenuBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('show');
+                    notificationsDropdown.classList.remove('show');
+                    messagesDropdown.classList.remove('show');
+                });
+
+                // Close dropdowns when clicking outside
+                document.addEventListener('click', function (event) {
+                    if (!notificationsBtn.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+                        notificationsDropdown.classList.remove('show');
+                    }
+                    if (!messagesBtn.contains(event.target) && !messagesDropdown.contains(event.target)) {
+                        messagesDropdown.classList.remove('show');
+                    }
+                    if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+
+                // Search functionality
+                const searchInput = document.querySelector('.search-input');
+                const searchBtn = document.querySelector('.search-btn');
+
+                searchBtn.addEventListener('click', function () {
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        // Redirect to search page or perform search
+                        window.location.href = `/freelancer/jobs?search=${encodeURIComponent(searchTerm)}`;
+                    }
+                });
+
+                searchInput.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        searchBtn.click();
+                    }
+                });
+
+                // Mark all notifications as read
+                const markAllReadBtn = document.querySelector('.mark-all-read');
+                if (markAllReadBtn) {
+                    markAllReadBtn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        const unreadItems = document.querySelectorAll('.notification-item.unread');
+                        unreadItems.forEach(item => {
+                            item.classList.remove('unread');
+                        });
+
+                        // Update notification badge
+                        const notificationBadge = notificationsBtn.querySelector('.notification-badge');
+                        if (notificationBadge) {
+                            notificationBadge.textContent = '0';
+                            notificationBadge.style.display = 'none';
+                        }
+                    });
+                }
+
+                // Add hover effects to dropdown items
+                const dropdownItems = document.querySelectorAll('.dropdown-item');
+                dropdownItems.forEach(item => {
+                    item.addEventListener('mouseenter', function () {
+                        this.style.transform = 'translateX(5px)';
+                    });
+
+                    item.addEventListener('mouseleave', function () {
+                        this.style.transform = 'translateX(0)';
+                    });
+                });
+
+                // Add smooth animations to notification items
+                const notificationItems = document.querySelectorAll('.notification-item, .message-item');
+                notificationItems.forEach((item, index) => {
+                    item.style.animationDelay = `${index * 0.1}s`;
+                    item.classList.add('fade-in');
+                });
+            });
+        </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JobEditForm</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Home css -->
+    <link href="/home/css/style.css" rel="stylesheet">
+    <link href="/my-css/style.css" rel="stylesheet">
+    <link href="/client-dashboard-css/style.css" rel="stylesheet">
+
+    <style>
+        /* Container */
+        .job-edit-form-container-main {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            font-family: "Poppins", sans-serif;
+        }
+
+        /* Form styling */
+        .job-edit-form-container-main form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels */
+        .job-edit-form-container-main label {
+            font-weight: 500;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        /* Inputs and selects */
+        .job-edit-form-container-main input[type="text"],
+        .job-edit-form-container-main input[type="number"],
+        .job-edit-form-container-main input[type="date"],
+        .job-edit-form-container-main select {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .job-edit-form-container-main input:focus,
+        .job-edit-form-container-main select:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Row for budget fields */
+        .job-edit-form-container-main .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .job-edit-form-container-main .col-md-6 {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Checkbox */
+        .job-edit-form-container-main input[type="checkbox"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        /* Submit button */
+        .job-edit-form-container-main button {
+            margin-top: 20px;
+            padding: 12px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .job-edit-form-container-main button:hover {
+            background: #357abd;
+        }
+    </style>
+
+</head>
+
+<body>
+    <%-include("./layouts/clientDashboardNavber") %>
+
+        <div class="job-edit-form-container-main">
+            <h3 style="color: #108a00;">Edit you job</h3>
+            <form action="/jobs/<%= job._id %>" method="POST">
+                <label>Title:</label>
+                <input type="text" name="title" value="<%= job.title %>" required />
+
+                <label>Skills (comma separated):</label>
+                <input type="text" name="skills" value="<%= job.skills.join(', ') %>" required />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Min Budget ($):</label>
+                        <input type="number" name="minBudget" value="<%= job.budget.min %>" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label>Max Budget ($):</label>
+                        <input type="number" name="maxBudget" value="<%= job.budget.max %>" required />
+                    </div>
+                </div>
+
+                <label>Deadline:</label>
+                <input type="date" name="deadline" value="<%= job.deadline.toISOString().substring(0,10) %>"
+                    min="<%= new Date().toISOString().substring(0,10) %>" required />
+
+                <label>Status:</label>
+                <select name="status">
+                    <option value="open" <%=job.status==='open' ? 'selected' : '' %>>Open</option>
+                    <option value="in-progress" <%=job.status==='in-progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="completed" <%=job.status==='completed' ? 'selected' : '' %>>Completed</option>
+                    <option value="cancelled" <%=job.status==='cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <option value="closed" <%=job.status==='closed' ? 'selected' : '' %>>Closed</option>
+                </select>
+
+                <label>Experience Level:</label>
+                <select name="experienceLevel">
+                    <option value="entry" <%=job.experienceLevel==='entry' ? 'selected' : '' %>>Entry</option>
+                    <option value="intermediate" <%=job.experienceLevel==='intermediate' ? 'selected' : '' %>
+                        >Intermediate</option>
+                    <option value="expert" <%=job.experienceLevel==='expert' ? 'selected' : '' %>>Expert</option>
+                </select>
+
+                <div>
+                    <label>
+                        <input type="checkbox" name="isUrgent" <%=job.isUrgent ? 'checked' : '' %> /> Urgent
+                    </label>
+                </div>
+
+                <button type="submit">Update Job</button>
+            </form>
+        </div>
+
+        <footer>
+            <%-include("./layouts/footer") %>
+        </footer>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script>
+            // Sidebar Toggle Functionality
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const toggleBtn = document.getElementById('toggleSidebar');
+
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+            });
+
+            // Mobile Sidebar Toggle
+            if (window.innerWidth <= 768) {
+                sidebar.classList.add('mobile-open');
+            }
+
+            // Delete Job Modal Function
+            function showDeleteModal(jobId, jobTitle) {
+                document.getElementById('jobTitle').textContent = jobTitle;
+                document.getElementById('deleteJobForm').action = `/jobs/delete/${jobId}`;
+                new bootstrap.Modal(document.getElementById('deleteJobModal')).show();
+            }
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Auto-hide flash messages after 5 seconds
+            setTimeout(() => {
+                const flashMessages = document.querySelectorAll('.alert');
+                flashMessages.forEach(message => {
+                    message.style.opacity = '0';
+                    setTimeout(() => message.remove(), 300);
+                });
+            }, 5000);
+        </script>
+
+</body>
+
+</html>

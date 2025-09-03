@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CreateJob</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="home/css/style.css" rel="stylesheet">
+  <!-- Customized Stylesheet -->
+  <link rel="stylesheet" href="my-css/style.css">
+  <link rel="stylesheet" href="client-dashboard-css/style.css">
+</head>
+
+<body>
+  <!-- <%-include("./layouts/navbar") %> -->
+  <%-include("./layouts/clientDashboardNavber") %>
+
+    <div class="container mt-4">
+      <h2>Add New Job</h2>
+      <form action="/createJob" method="POST">
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input type="text" class="form-control" id="title" name="title" required />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea class="form-control" id="description" name="description" rows="4" minlength="5" maxlength="150" required 
+          oninput="updateCount(this)"></textarea>
+          <small id="charCount">150 Remaining</small>
+        </div>
+        <div class="mb-3">
+          <label for="skills" class="form-label">Skills (comma separated)</label>
+          <input type="text" class="form-control" id="skills" name="skills" />
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="minBudget" class="form-label">Minimum Budget ($)</label>
+              <input type="number" class="form-control" id="minBudget" name="minBudget" required />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label for="maxBudget" class="form-label">Maximum Budget ($)</label>
+              <input type="number" class="form-control" id="maxBudget" name="maxBudget" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="deadline" class="form-label">Deadline</label>
+          <input type="date" class="form-control" name="deadline" min="<%= new Date().toISOString().substring(0,10) %>"
+            required />
+        </div>
+
+        <div class="mb-3">
+          <label for="experienceLevel" class="form-label">Experience Level Required</label>
+          <select class="form-control" id="experienceLevel" name="experienceLevel">
+            <option value="entry">Entry Level</option>
+            <option value="intermediate" selected>Intermediate</option>
+            <option value="expert">Expert</option>
+          </select>
+        </div>
+
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="isUrgent" name="isUrgent" />
+          <label class="form-check-label" for="isUrgent">Mark as Urgent</label>
+        </div>
+        <button type="submit" class="btn btn-success">Add Job</button>
+        <a href="/clientPage" class="btn btn-secondary">Back</a>
+      </form>
+    </div>
+
+    <footer>
+      <%-include("./layouts/footer") %>
+    </footer>
+
+
+    <script>
+      function updateCount(textarea) {
+        const max = textarea.getAttribute("maxlength");
+        const currentLength = textarea.value.length;
+        const remaining = max - currentLength;
+
+        document.getElementById("charCount").textContent =
+          remaining + " Remaining";
+      }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="home/lib/easing/easing.min.js"></script>
+    <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="home/mail/jqBootstrapValidation.min.js"></script>
+    <script src="home/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="home/js/main.js"></script>
+</body>
+
+</html>

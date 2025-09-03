@@ -1,0 +1,68 @@
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h3 class="logo1">Client Dashboard</h3>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-item">
+      <a href="/clientPage" class="nav-link active">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/createJob" class="nav-link">
+        <i class="fas fa-plus-circle"></i>
+        <span>Post Job</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/clientPage" class="nav-link">
+        <i class="fas fa-briefcase"></i>
+        <span>My Jobs</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/messages/inbox" class="nav-link">
+        <i class="fas fa-comments"></i>
+        <span>Messages</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/clientProfile" class="nav-link">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+      </a>
+    </div>
+    <div class="nav-item">
+      <a href="/logout" class="nav-link">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </nav>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+  <!-- Top Navigation -->
+  <div class="top-nav">
+    <h3 class="logo">WorkHere</h3>
+    <div class="navbar-center">
+      <div class="search-container">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+    <div class="user-info">
+      <div>
+        <img src="<%= (user && user.profilePic) ? user.profilePic : '/home/img/user.jpg' %>" alt="Profile"
+          class="rounded-circle" width="50" height="50" />
+      </div>
+      <div>
+        <div style="font-weight: 700; font-size: 17px; color: black;">
+          <%= user.name %>
+        </div>
+      </div>
+    </div>
+  </div>

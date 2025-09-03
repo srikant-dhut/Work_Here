@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreelancerJobConversation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <link rel="stylesheet" href="/my-css/style.css">
+  <link href="/home/css/style.css" rel="stylesheet" />
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+  <link rel="stylesheet" href="/freelancer-nav-css/style.css">
+
+  <!-- Socket.IO for real-time messaging -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <style>
+    .conversation-container {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .message-bubble {
+      border-radius: 18px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .message-bubble:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .job-info-card {
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
+
+    .conversation-card {
+      border: none;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
+
+    .typing-indicator {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .message-input {
+      border-radius: 25px;
+      border: 2px solid #e9ecef;
+      transition: border-color 0.3s ease;
+    }
+
+    .message-input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    .send-button {
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  <%-include("./layouts/FreelancerDashboardNavber") %>
+    <%-include("./layouts/flash") %>
+
+      <div style="margin-top: 100px;" class="container main-content">
+        <div class="row container-fluid">
+          <div class="col-md-4">
+            <div class="card job-info-card">
+              <div class="card-header">
+                <h5><i class="fas fa-briefcase me-2"></i>Job Info</h5>
+              </div>
+              <div class="card-body">
+                <h6 class="mb-3">
+                  <i class="fas fa-briefcase me-2"></i>
+                  <%= job.title %>
+                </h6>
+                <p class="text-muted mb-3">
+                  <%= job.description %>
+                </p>
+
+                <div class="mb-3">
+                  <p class="mb-1"><strong><i class="fas fa-user me-2"></i>Client:</strong></p>
+                  <p class="text-muted mb-0">
+                    <%= job.client.name %>
+                      <span class="badge bg-success ms-2" id="clientStatus">
+                        <i class="fas fa-circle"></i> Online
+                      </span>
+                  </p>
+                </div>
+
+                <% if (job.acceptedFreelancer) { %>
+                  <div class="mb-3">
+                    <p class="mb-1"><strong><i class="fas fa-user-tie me-2"></i>Freelancer:</strong></p>
+                    <p class="text-muted mb-0">
+                      <%= job.acceptedFreelancer.name %>
+                    </p>
+                  </div>
+                  <% } %>
+
+                    <div class="mb-3">
+                      <p class="mb-1"><strong><i class="fas fa-info-circle me-2"></i>Status:</strong></p>
+                      <span class="badge bg-info">
+                        <%= job.status %>
+                      </span>
+                    </div>
+
+                    <% if (job.budget) { %>
+                      <div class="mb-3">
+                        <p class="mb-1"><strong><i class="fas fa-dollar-sign me-2"></i>Budget:</strong></p>
+                        <p class="text-muted mb-0">$<%= job.budget.min %> - $<%= job.budget.max %>
+                        </p>
+                      </div>
+                      <% } %>
+
+                        <% if (job.deadline) { %>
+                          <div class="mb-3">
+                            <p class="mb-1"><strong><i class="fas fa-calendar me-2"></i>Deadline:</strong></p>
+                            <p class="text-muted mb-0">
+                              <%= new Date(job.deadline).toLocaleDateString() %>
+                            </p>
+                          </div>
+                          <% } %>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="card conversation-card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>
+                  <i class="fas fa-comments me-2"></i>Conversation
+                </h5>
+                <div class="d-flex gap-2">
+                  <% if (isAcceptedFreelancer && job.status==='in-progress' ) { %>
+                    <button class="btn btn-success btn-sm" onclick="showMarkReadyModal()">
+                      <i class="fas fa-check-circle me-1"></i>Mark Ready
+                    </button>
+                    <% } %>
+                      <a href="<%= isClient ? '/clientPage' : '/freelancer/dashboard' %>"
+                        class="btn btn-outline-primary btn-sm">Back to Dashboard</a>
+                </div>
+              </div>
+              <div class="card-body" style="height: 400px; overflow-y: auto; background: #f8f9fa;">
+                <% if (messages.length===0) { %>
+                  <div class="text-center text-muted">No messages yet. Start the conversation!</div>
+                  <% } %>
+                    <% messages.forEach(msg=> { %>
+                      <div
+                        class="d-flex mb-3 <%= msg.sender._id.toString() === user.userId ? 'justify-content-end' : 'justify-content-start' %>">
+                        <div
+                          class="p-2 rounded message-bubble <%= msg.sender._id.toString() === user.userId ? 'bg-primary text-white' : 'bg-white' %>"
+                          style="max-width: 70%;">
+                          <div class="small fw-bold">
+                            <%= msg.sender.name %>
+                          </div>
+                          <div>
+                            <%= msg.content %>
+                          </div>
+                          <div class="small text-muted mt-1">
+                            <script>
+                              document.write(formatMessageTime('<%= msg.createdAt %>'));
+                            </script>
+                          </div>
+                        </div>
+                      </div>
+                      <% }) %>
+              </div>
+              <div class="card-footer">
+                <form action="/messages/send" method="POST" class="d-flex gap-2">
+                  <input type="hidden" name="jobId" value="<%= job._id %>" />
+                  <input type="hidden" name="recipientId"
+                    value="<%= isClient ? job.acceptedFreelancer._id : job.client._id %>" />
+                  <input type="text" name="content" class="form-control message-input"
+                    placeholder="Type your message..." required />
+                  <button class="btn btn-primary send-button" type="submit" id="sendButton">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+  <div class="container-fluid">
+      <%-include("./layouts/footer") %>
+  </div>
+
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+      <!-- JavaScript Libraries -->
+      <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+      <script src="home/lib/easing/easing.min.js"></script>
+      <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+      <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+      <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+      <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+      <!-- Contact Javascript File -->
+      <script src="home/mail/jqBootstrapValidation.min.js"></script>
+      <script src="home/mail/contact.js"></script>
+
+      <!-- Template Javascript -->
+      <script src="home/js/main.js"></script>
+
+      <!-- Mark Ready Modal -->
+      <div class="modal fade" id="markReadyModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Mark Job as Ready</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to mark this job as completed and notify the client?</p>
+              <p class="text-muted">This action will change the job status to 'ready for review'.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <form action="/freelancer/jobs/<%= job._id %>/ready" method="POST" style="display: inline;">
+                <button type="submit" class="btn btn-success">Mark Ready</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function showMarkReadyModal() {
+          new bootstrap.Modal(document.getElementById('markReadyModal')).show();
+        }
+
+        // Socket.IO integration for real-time messaging
+        const socket = io();
+        const jobId = '<%= job._id %>';
+
+        // Join the job room
+        socket.emit('joinJob', jobId);
+
+        // Emit user online status
+        socket.emit('userOnline', {
+          jobId,
+          userId: '<%= user.userId %>',
+          userName: '<%= user.name %>'
+        });
+
+        // Listen for new messages
+        socket.on('messageReceived', (data) => {
+          if (data.jobId === jobId) {
+            // Add new message to the conversation
+            addMessageToConversation(data);
+
+            // Play notification sound if message is from someone else
+            if (data.sender._id !== '<%= user.userId %>') {
+              playNotificationSound();
+            }
+          }
+        });
+
+        // Function to play notification sound
+        function playNotificationSound() {
+          try {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+            audio.volume = 0.3;
+            audio.play();
+          } catch (e) {
+            console.log('Could not play notification sound');
+          }
+        }
+
+        // Function to format message time
+        function formatMessageTime(timestamp) {
+          const now = new Date();
+          const messageTime = new Date(timestamp);
+          const diffInMinutes = Math.floor((now - messageTime) / (1000 * 60));
+
+          if (diffInMinutes < 1) {
+            return 'Just now';
+          } else if (diffInMinutes < 60) {
+            return `${diffInMinutes}m ago`;
+          } else if (diffInMinutes < 1440) {
+            const hours = Math.floor(diffInMinutes / 60);
+            return `${hours}h ago`;
+          } else {
+            return messageTime.toLocaleDateString();
+          }
+        }
+
+        // Listen for message read status
+        socket.on('messageRead', (data) => {
+          if (data.jobId === jobId) {
+            updateMessageReadStatus(data.messageId, data.readAt);
+          }
+        });
+
+        // Listen for user status changes
+        socket.on('userStatusChanged', (data) => {
+          if (data.jobId === jobId) {
+            updateUserStatus(data.userId, data.status);
+          }
+        });
+
+        // Function to update user status
+        function updateUserStatus(userId, status) {
+          const clientStatus = document.getElementById('clientStatus');
+          if (clientStatus) {
+            if (status === 'online') {
+              clientStatus.className = 'badge bg-success ms-2';
+              clientStatus.innerHTML = '<i class="fas fa-circle"></i> Online';
+            } else {
+              clientStatus.className = 'badge bg-secondary ms-2';
+              clientStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
+            }
+          }
+        }
+
+
+        //Form submit handler
+        document.querySelector('#messageForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          const input = this.querySelector('input[name="content"]');
+          const message = input.value.trim();
+          if (!message) return;
+
+          socket.emit("sendMessage", {
+            jobId: "<%= job._id %>",
+            content: message
+          });
+
+          input.value = "";
+        });
+
+        //Listen for new messages (only once)
+        socket.on("newMessage", function (data) {
+          addMessageToConversation(data);
+        });
+
+
+        function updateMessageReadStatus(messageId, readAt) {
+          // Update read status for messages (if needed)
+          console.log(`Message ${messageId} read at ${readAt}`);
+        }
+
+        function addMessageToConversation(data) {
+          const messagesContainer = document.querySelector('.conversation-card .card-body');
+          if (!messagesContainer) return;
+
+          const messageDiv = document.createElement('div');
+          messageDiv.className = 'mb-2';
+          messageDiv.textContent = data.content;
+
+          messagesContainer.appendChild(messageDiv);
+
+          // always scroll to bottom (like history)
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+
+        // Handle form submission with AJAX for better UX
+        document.querySelector('form').addEventListener('submit', function (e) {
+          e.preventDefault();
+
+          const formData = new FormData(this);
+          const content = formData.get('content');
+
+          if (!content.trim()) return;
+
+          // Disable send button temporarily
+          const sendButton = document.getElementById('sendButton');
+          const originalText = sendButton.innerHTML;
+          sendButton.disabled = true;
+          sendButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+          // Send message via AJAX
+          fetch('/messages/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formData)
+          })
+            .then(response => {
+              if (response.ok) {
+                // Clear input field
+                this.querySelector('input[name="content"]').value = '';
+
+                // Add message to conversation immediately
+                const messageData = {
+                  sender: { _id: '<%= user.userId %>', name: '<%= user.name %>' },
+                  content: content.trim(),
+                  createdAt: new Date(),
+                  jobId: jobId
+                };
+                addMessageToConversation(messageData);
+              } else {
+                throw new Error('Failed to send message');
+              }
+            })
+            .catch(error => {
+              console.error('Error sending message:', error);
+              alert('Failed to send message. Please try again.');
+            })
+            .finally(() => {
+              // Re-enable send button
+              sendButton.disabled = false;
+              sendButton.innerHTML = originalText;
+            });
+        });
+
+        // Add typing indicator functionality
+        let typingTimeout;
+        const messageInput = document.querySelector('input[name="content"]');
+
+        messageInput.addEventListener('input', function () {
+          if (this.value.trim()) {
+            // Emit typing event
+            socket.emit('typing', { jobId, userId: '<%= user.userId %>', userName: '<%= user.name %>' });
+          }
+        });
+
+        // Listen for typing events from other users
+        socket.on('userTyping', (data) => {
+          if (data.jobId === jobId && data.userId !== '<%= user.userId %>') {
+            const typingIndicator = document.getElementById('typingIndicator');
+            typingIndicator.textContent = `${data.userName} is typing...`;
+            typingIndicator.style.display = 'block';
+
+            // Hide typing indicator after 3 seconds
+            clearTimeout(typingTimeout);
+            typingTimeout = setTimeout(() => {
+              typingIndicator.style.display = 'none';
+            }, 3000);
+          }
+        });
+
+        // Add keyboard shortcuts
+        messageInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.querySelector('form').dispatchEvent(new Event('submit'));
+          }
+        });
+
+        // Handle page unload to emit offline status
+        window.addEventListener('beforeunload', function () {
+          socket.emit('userOffline', {
+            jobId,
+            userId: '<%= user.userId %>',
+            userName: '<%= user.name %>'
+          });
+        });
+      </script>
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const sidebar = document.getElementById('sidebar');
+          const mainContent = document.getElementById('mainContent');
+          const sidebarToggle = document.getElementById('sidebarToggle');
+          const mobileToggle = document.getElementById('mobileToggle');
+          const toggleIcon = sidebarToggle.querySelector('i');
+
+          // Desktop sidebar toggle
+          sidebarToggle.addEventListener('click', function () {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+
+            if (sidebar.classList.contains('collapsed')) {
+              toggleIcon.className = 'fas fa-chevron-right';
+            } else {
+              toggleIcon.className = 'fas fa-chevron-left';
+            }
+          });
+
+          // Mobile sidebar toggle
+          mobileToggle.addEventListener('click', function () {
+            sidebar.classList.toggle('show');
+          });
+
+          // Close sidebar when clicking outside on mobile
+          document.addEventListener('click', function (event) {
+            if (window.innerWidth <= 768) {
+              const isClickInsideSidebar = sidebar.contains(event.target);
+              const isClickOnMobileToggle = mobileToggle.contains(event.target);
+
+              if (!isClickInsideSidebar && !isClickOnMobileToggle) {
+                sidebar.classList.remove('show');
+              }
+            }
+          });
+
+          // Handle window resize
+          window.addEventListener('resize', function () {
+            if (window.innerWidth > 768) {
+              sidebar.classList.remove('show');
+            }
+          });
+
+          // Add active class to current nav item
+          const currentPath = window.location.pathname;
+          const navLinks = document.querySelectorAll('.nav-link');
+
+          navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+              link.classList.add('active');
+            } else {
+              link.classList.remove('active');
+            }
+          });
+
+          // Smooth hover effects
+          const navItems = document.querySelectorAll('.nav-item');
+          navItems.forEach(item => {
+            item.addEventListener('mouseenter', function () {
+              this.style.transform = 'translateX(5px)';
+            });
+
+            item.addEventListener('mouseleave', function () {
+              this.style.transform = 'translateX(0)';
+            });
+          });
+
+          // Top Navbar Dropdown Functionality
+          const notificationsBtn = document.getElementById('notificationsBtn');
+          const messagesBtn = document.getElementById('messagesBtn');
+          const userMenuBtn = document.getElementById('userMenuBtn');
+          const notificationsDropdown = document.getElementById('notificationsDropdown');
+          const messagesDropdown = document.getElementById('messagesDropdown');
+          const userDropdown = document.getElementById('userDropdown');
+
+          // Notifications dropdown
+          notificationsBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            notificationsDropdown.classList.toggle('show');
+            messagesDropdown.classList.remove('show');
+            userDropdown.classList.remove('show');
+          });
+
+          // Messages dropdown
+          messagesBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            messagesDropdown.classList.toggle('show');
+            notificationsDropdown.classList.remove('show');
+            userDropdown.classList.remove('show');
+          });
+
+          // User menu dropdown
+          userMenuBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+            notificationsDropdown.classList.remove('show');
+            messagesDropdown.classList.remove('show');
+          });
+
+          // Close dropdowns when clicking outside
+          document.addEventListener('click', function (event) {
+            if (!notificationsBtn.contains(event.target) && !notificationsDropdown.contains(event.target)) {
+              notificationsDropdown.classList.remove('show');
+            }
+            if (!messagesBtn.contains(event.target) && !messagesDropdown.contains(event.target)) {
+              messagesDropdown.classList.remove('show');
+            }
+            if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+              userDropdown.classList.remove('show');
+            }
+          });
+
+          // Search functionality
+          const searchInput = document.querySelector('.search-input');
+          const searchBtn = document.querySelector('.search-btn');
+
+          searchBtn.addEventListener('click', function () {
+            const searchTerm = searchInput.value.trim();
+            if (searchTerm) {
+              // Redirect to search page or perform search
+              window.location.href = `/freelancer/jobs?search=${encodeURIComponent(searchTerm)}`;
+            }
+          });
+
+          searchInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+              searchBtn.click();
+            }
+          });
+
+          // Mark all notifications as read
+          const markAllReadBtn = document.querySelector('.mark-all-read');
+          if (markAllReadBtn) {
+            markAllReadBtn.addEventListener('click', function (e) {
+              e.preventDefault();
+              const unreadItems = document.querySelectorAll('.notification-item.unread');
+              unreadItems.forEach(item => {
+                item.classList.remove('unread');
+              });
+
+              // Update notification badge
+              const notificationBadge = notificationsBtn.querySelector('.notification-badge');
+              if (notificationBadge) {
+                notificationBadge.textContent = '0';
+                notificationBadge.style.display = 'none';
+              }
+            });
+          }
+
+          // Add hover effects to dropdown items
+          const dropdownItems = document.querySelectorAll('.dropdown-item');
+          dropdownItems.forEach(item => {
+            item.addEventListener('mouseenter', function () {
+              this.style.transform = 'translateX(5px)';
+            });
+
+            item.addEventListener('mouseleave', function () {
+              this.style.transform = 'translateX(0)';
+            });
+          });
+
+          // Add smooth animations to notification items
+          const notificationItems = document.querySelectorAll('.notification-item, .message-item');
+          notificationItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+            item.classList.add('fade-in');
+          });
+        });
+      </script>
+</body>
+
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ClientProfileEditPage</title>
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Home css -->
+  <link href="/home/css/style.css" rel="stylesheet">
+  <link href="/my-css/style.css" rel="stylesheet">
+  <link href="/client-dashboard-css/style.css" rel="stylesheet">
+</head>
+
+<body>
+  <%-include("./layouts/clientDashboardNavber") %>
+    <div class="clientProfileEditForm-main">
+      <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Update Your Profile</h2>
+          <a href="/clientProfile" class="btn btn-dark">Back to Profile</a>
+        </div>
+
+        <% if (typeof error_msg !=='undefined' && error_msg.length> 0) { %>
+          <div class="alert alert-danger" role="alert">
+            <%= error_msg %>
+          </div>
+          <% } %>
+
+            <% if (typeof success_msg !=='undefined' && success_msg.length> 0) { %>
+              <div class="alert alert-success" role="alert">
+                <%= success_msg %>
+              </div>
+              <% } %>
+
+                <form action="/clientProfileEdit/<%= user._id %>" method="POST" class="row g-3"
+                  enctype="multipart/form-data">
+                  <!-- Name and Email -->
+                  <div class="col-md-6">
+                    <label for="name" class="form-label">Full Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" required />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>"
+                      required />
+                  </div>
+
+                  <!-- Contact -->
+                  <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone Number *</label>
+                    <input type="text" class="form-control" id="phone" name="phone" value="<%= user.phone %>"
+                      required />
+                  </div>
+
+                  <!-- Location Fields -->
+                  <div class="col-md-6">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="city" name="city" value="<%= user.city || '' %>" />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" class="form-control" id="state" name="state" value="<%= user.state || '' %>" />
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" class="form-control" id="country" name="country"
+                      value="<%= user.country || '' %>" />
+                  </div>
+
+                  <!-- Profile Picture Upload -->
+                  <div class="col-md-6">
+                    <label for="profilePic" class="form-label">Profile Picture</label>
+                    <input type="file" class="form-control" id="profilePic" name="profilePic" accept="image/*" />
+                    <% if (user.profilePic) { %>
+                      <div class="mt-2">
+                        <img src="<%= user.profilePic %>" alt="Profile Picture" class="img-thumbnail"
+                          style="max-width: 120px;" />
+                      </div>
+                      <% } %>
+                  </div>
+
+                  <!-- Hidden Redirect -->
+                  <input type="hidden" name="redirectTo" value="<%= redirectTo %>" />
+
+                  <!-- Submit -->
+                  <div class="col-12" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary w-10">
+                      Update Profile
+                    </button>
+                  </div>
+                </form>
+      </div>
+    </div>
+    <footer>
+      <%-include("./layouts/footer") %>
+    </footer>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      // Sidebar Toggle Functionality
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const toggleBtn = document.getElementById('toggleSidebar');
+
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+      });
+
+      // Mobile Sidebar Toggle
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('mobile-open');
+      }
+
+      // Delete Job Modal Function
+      function showDeleteModal(jobId, jobTitle) {
+        document.getElementById('jobTitle').textContent = jobTitle;
+        document.getElementById('deleteJobForm').action = `/jobs/delete/${jobId}`;
+        new bootstrap.Modal(document.getElementById('deleteJobModal')).show();
+      }
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+
+      // Auto-hide flash messages after 5 seconds
+      setTimeout(() => {
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(message => {
+          message.style.opacity = '0';
+          setTimeout(() => message.remove(), 300);
+        });
+      }, 5000);
+    </script>
+</body>
+
+</html>

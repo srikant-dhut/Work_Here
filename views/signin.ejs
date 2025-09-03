@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registration & Login</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="signin-css/style.css">
+
+</head>
+
+<body>
+	<%- include("./layouts/flash") %>
+		<div class="container" id="container">
+			<div class="form-container sign-up-container">
+				<form action="/register" method="post">
+					<h1>Create Account</h1>
+					<div style="height: 12px;" class="social-container"></div>
+					<input type="text" class="form-control" id="name" placeholder="Full Name" name="name" />
+					<input type="email" id="email" placeholder="info@example.com" name="email" />
+					<input type="number" id="phone" placeholder="1234567890" name="phone" />
+					<span class="password-show-toggle js-password-show-toggle"><span class="uil"></span></span>
+					<input type="password" id="password" placeholder="Password" name="password" />
+					<input type="text" id="role" placeholder="client or freelancer" name="role" />
+
+					<button>Register</button>
+				</form>
+			</div>
+			<div class="form-container sign-in-container">
+				<form action="/login" method="post">
+					<h1>Sign in</h1>
+					<div style="height: 12px;" class="social-container"></div>
+					<input type="email" id="email" placeholder="info@example.com" name="email" />
+
+					<span class="password-show-toggle js-password-show-toggle">
+						<span class="uil"></span>
+					</span>
+
+					<input type="password" class="form-control" id="password" placeholder="Password" name="password" />
+
+					<a href="forgot-password">Forgot your password?</a>
+
+					<button>Log In</button>
+				</form>
+			</div>
+			<div class="overlay-container">
+				<div class="overlay">
+					<div class="overlay-panel overlay-left">
+						<h1>Welcome Back!</h1>
+						<p>Already a member?</p>
+						<button class="ghost" id="signIn">Log In</button>
+					</div>
+					<div class="overlay-panel overlay-right">
+						<h1>Hello, Friend!</h1>
+						<p>Don’t have an account?</p>
+						<button class="ghost" id="signUp">Register</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer>
+			<p>Created with <i class="fa fa-heart"></i> by Srikant Dhut</p>
+		</footer>
+		<script src="signin-js/script.js"></script>
+</body>
+
+</html>

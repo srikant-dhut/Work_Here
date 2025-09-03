@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JobConversation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/my-css/style.css">
+
+  <link href="/home/css/style.css" rel="stylesheet">
+  <link href="/my-css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-design-iconic-font@2.2.0/dist/css/material-design-iconic-font.min.css">
+
+  <link href="/client-dashboard-css/style.css" rel="stylesheet">
+</head>
+
+<body>
+   <%-include("./layouts/clientDashboardNavber") %>
+  <%-include("./layouts/flash") %>
+
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <h5><i class="fas fa-briefcase me-2"></i>Job Info</h5>
+            </div>
+            <div class="card-body">
+              <h6>
+                <%= job.title %>
+              </h6>
+              <p class="text-muted">
+                <%= job.description %>
+              </p>
+              <p><strong>Client:</strong>
+                <%= job.client.name %>
+              </p>
+              <% if (job.acceptedFreelancer) { %>
+                <p><strong>Freelancer:</strong>
+                  <%= job.acceptedFreelancer.name %>
+                </p>
+                <% } %>
+                  <p><strong>Status:</strong> <span class="badge bg-info">
+                      <%= job.status %>
+                    </span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5><i class="fas fa-comments me-2"></i>Conversation</h5>
+              <div class="d-flex gap-2">
+                <% if (isAcceptedFreelancer && job.status==='in-progress' ) { %>
+                  <button class="btn btn-success btn-sm" onclick="showMarkReadyModal()">
+                    <i class="fas fa-check-circle me-1"></i>Mark Ready
+                  </button>
+                  <% } %>
+                    <!-- <a href="/clientPage" class="btn btn-outline-primary btn-sm">Back to Dashboard</a> -->
+                    <a href="<%= isClient ? '/clientPage' : '/freelancer/dashboard' %>"
+                      class="btn btn-outline-primary btn-sm">Back to Dashboard</a>
+              </div>
+            </div>
+            <div class="card-body" style="height: 400px; overflow-y: auto; background: #f8f9fa;">
+              <% if (messages.length===0) { %>
+                <div class="text-center text-muted">No messages yet. Start the conversation!</div>
+                <% } %>
+                  <% messages.forEach(msg=> { %>
+                    <div
+                      class="d-flex mb-3 <%= msg.sender._id.toString() === user.userId ? 'justify-content-end' : 'justify-content-start' %>">
+                      <div
+                        class="p-2 rounded <%= msg.sender._id.toString() === user.userId ? 'bg-primary text-white' : 'bg-white' %>"
+                        style="max-width: 70%;">
+                        <div class="small fw-bold">
+                          <%= msg.sender.name %>
+                        </div>
+                        <div>
+                          <%= msg.content %>
+                        </div>
+                        <div class="small text-muted mt-1">
+                          <%= new Date(msg.createdAt).toLocaleString() %>
+                        </div>
+                      </div>
+                    </div>
+                    <% }) %>
+            </div>
+            <div class="card-footer">
+              <form action="/messages/send" method="POST" class="d-flex gap-2">
+                <input type="hidden" name="jobId" value="<%= job._id %>" />
+                <input type="hidden" name="recipientId"
+                  value="<%= isClient ? job.acceptedFreelancer._id : job.client._id %>" />
+                <input type="text" name="content" class="form-control" placeholder="Type your message..." required />
+                <button class="btn btn-primary" type="submit">
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+    <%-include("./layouts/footer") %>
+  </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="home/lib/easing/easing.min.js"></script>
+    <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="home/mail/jqBootstrapValidation.min.js"></script>
+    <script src="home/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="home/js/main.js"></script>
+
+    <!-- Mark Ready Modal -->
+    <div class="modal fade" id="markReadyModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Mark Job as Ready</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to mark this job as completed and notify the client?</p>
+            <p class="text-muted">This action will change the job status to 'ready for review'.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form action="/freelancer/jobs/<%= job._id %>/ready" method="POST" style="display: inline;">
+              <button type="submit" class="btn btn-success">Mark Ready</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showMarkReadyModal() {
+        new bootstrap.Modal(document.getElementById('markReadyModal')).show();
+      }
+    </script>
+
+
+ <script>
+      // Sidebar Toggle Functionality
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('mainContent');
+      const toggleBtn = document.getElementById('toggleSidebar');
+
+      toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('expanded');
+      });
+
+      // Mobile Sidebar Toggle
+      if (window.innerWidth <= 768) {
+        sidebar.classList.add('mobile-open');
+      }
+
+      // Delete Job Modal Function
+      function showDeleteModal(jobId, jobTitle) {
+        document.getElementById('jobTitle').textContent = jobTitle;
+        document.getElementById('deleteJobForm').action = `/jobs/delete/${jobId}`;
+        new bootstrap.Modal(document.getElementById('deleteJobModal')).show();
+      }
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+          });
+        });
+      });
+
+      // Auto-hide flash messages after 5 seconds
+      setTimeout(() => {
+        const flashMessages = document.querySelectorAll('.alert');
+        flashMessages.forEach(message => {
+          message.style.opacity = '0';
+          setTimeout(() => message.remove(), 300);
+        });
+      }, 5000);
+    </script>
+
+
+</body>
+
+</html>

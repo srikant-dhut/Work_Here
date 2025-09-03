@@ -1,0 +1,108 @@
+<!-- Mobile Toggle Button -->
+<button class="mobile-toggle" id="mobileToggle">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h4 style="color: white; font-weight: bold;">Freelancer Dashboard</h4>
+    </button>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item">
+      <a href="/freelancer/dashboard" class="nav-link active">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Dashboard</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/freelancer/jobs" class="nav-link">
+        <i class="fas fa-search"></i>
+        <span>Browse Jobs</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/freelancer/bids" class="nav-link">
+        <i class="fas fa-paper-plane"></i>
+        <span>My Bids</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/messages/inbox/freelancer" class="nav-link">
+        <i class="fas fa-envelope"></i>
+        <span>Messages</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/freelancer/profile" class="nav-link">
+        <i class="fas fa-user-edit"></i>
+        <span>Profile</span>
+      </a>
+    </div>
+
+    <div class="nav-item">
+      <a href="/freelancerAccount" class="nav-link">
+        <i class="fas fa-user-circle"></i>
+        <span>Account</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="nav-item">
+      <a href="/logout" class="nav-link">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content Wrapper -->
+
+<!-- Top Navbar -->
+
+<nav class="top-navbar">
+  <div class="navbar-container">
+    <div class="navbar-left">
+      <div class="breadcrumb-nav">
+        <h3>WorkHere</h3>
+      </div>
+    </div>
+
+    <div class="navbar-center">
+      <div class="search-container">
+        <span class="search-icon"><i class="fas fa-search"></i></span>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+
+    <div class="navbar-right">
+      <div class="navbar-actions">
+
+
+        <!-- User Menu -->
+        <div class="FreelancerDashboard-user-info-main">
+          <div class="FreelancerDashboard-user-info-sub">
+
+            <img src="<%= (user && user.profilePic) ? user.profilePic : '/img/user.jpg' %>" alt="Profile"
+              class="rounded-circle" width="50" height="50" />
+          </div>
+          <div>
+            <div style="font-weight: 700; font-size: 17px; color: black;">
+              <%= user.name %>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</nav>

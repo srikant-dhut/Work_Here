@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AdminProfilePage</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      display: flex;
+    }
+
+    /* Sidebar Styles (same as Dashboard) */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    .sidebar-header {
+      padding: 30px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+    .sidebar-header h2 { color: white; font-size: 1.5rem; font-weight: 600; margin-bottom: 5px; }
+    .sidebar-header p { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+    .admin-profile { display: flex; align-items: center; gap: 15px; padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .admin-avatar { width: 50px; height: 50px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); object-fit: cover; }
+    .admin-info h4 { color: white; font-size: 1rem; margin-bottom: 5px; }
+    .admin-info p { color: rgba(255,255,255,0.7); font-size: 0.8rem; }
+    .sidebar-menu { padding: 20px 0; }
+    .menu-section { margin-bottom: 30px; }
+    .menu-section h3 { color: rgba(255,255,255,0.5); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; padding: 0 20px; margin-bottom: 15px; }
+    .menu-item { display: flex; align-items: center; gap: 15px; padding: 15px 20px; color: rgba(255,255,255,0.8); text-decoration: none; transition: all 0.3s ease; border-left: 3px solid transparent; }
+    .menu-item:hover { background: rgba(255,255,255,0.1); color: white; border-left-color: #3498db; }
+    .menu-item.active { background: rgba(52, 152, 219, 0.2); color: white; border-left-color: #3498db; }
+    .menu-item span { font-weight: 500; }
+    .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; }
+    .logout-btn { display: flex; align-items: center; gap: 15px; padding: 15px 20px; background: rgba(231, 76, 60, 0.2); color: #e74c3c; text-decoration: none; border-radius: 8px; transition: all 0.3s ease; border: 1px solid rgba(231, 76, 60, 0.3); }
+    .logout-btn:hover { background: #e74c3c; color: white; }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 280px;
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+    .top-header {
+      background: white;
+      padding: 20px 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .page-title{
+        display: flex;
+        justify-content: space-between;
+    }
+    .page-title h1 { color: #2c3e50; font-size: 1.8rem; font-weight: 600; }
+    .header-actions { display: flex; align-items: center; gap: 15px; }
+    .mobile-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #2c3e50; cursor: pointer; }
+
+    /* Profile Page Styles */
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; }
+    .profile-card { background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); overflow: hidden; }
+    .profile-header { background: #3498db; color: white; padding: 40px; text-align: center; }
+    .profile-avatar { width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; object-fit: cover; margin: 0 auto 20px; display: block; }
+    .profile-name { font-size: 2rem; font-weight: 600; margin-bottom: 10px; }
+    .profile-role { background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 20px; display: inline-block; font-weight: 500; }
+    .profile-body { padding: 40px; }
+    .section-title { font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+    .info-item { background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #3498db; }
+    .info-label { font-size: 0.9rem; color: #666; margin-bottom: 5px; text-transform: uppercase; font-weight: 500; }
+    .info-value { font-size: 1.1rem; color: #333; font-weight: 500; }
+    .action-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+    .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; text-decoration: none; font-weight: 500; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+    .btn-primary { background: #3498db; color: white; }
+    .btn-primary:hover { background: #2980b9; transform: translateY(-2px); }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; transform: translateY(-2px); }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main-content { margin-left: 0; }
+      .mobile-toggle { display: block; }
+      .info-grid { grid-template-columns: 1fr; }
+      .action-buttons { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h2>Admin Panel</h2>
+      <p>Dashboard</p>
+    </div>
+    <div class="admin-profile">
+      <img src="<%= user && user.profilePic ? user.profilePic : '/home/img/user-1.jpg' %>" alt="Admin" class="admin-avatar">
+      <div class="admin-info">
+        <h4><%= user ? user.name : 'Admin' %></h4>
+        <p>Administrator</p>
+      </div>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="menu-section">
+        <h3>Dashboard</h3>
+        <a href="/admin/dashboard" class="menu-item">
+          <span>Overview</span>
+        </a>
+      </div>
+      <div class="menu-section">
+        <h3>Account</h3>
+        <a href="/admin/adminProfile" class="menu-item active">
+          <span>Profile</span>
+        </a>
+        <a href="/admin/adminEditForm" class="menu-item">
+          <span>Edit Profile</span>
+        </a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="/admin/logout" class="logout-btn">
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="top-header">
+      <div class="page-title">
+        <h1>Admin Profile</h1>
+        
+      </div>
+      <div class="header-actions">
+        <a href="/admin/dashboard" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Back to Dashboard</a>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="profile-card">
+        <div class="profile-header">
+          <img src="<%= user && user.profilePic ? user.profilePic : '/home/img/user-1.jpg' %>" 
+               alt="<%= user ? user.name : 'Admin' %>" 
+               class="profile-avatar">
+          <div class="profile-name"><%= user ? user.name : 'Admin User' %></div>
+          <div class="profile-role"><i class="fas fa-shield-alt"></i> Administrator</div>
+        </div>
+
+        <div class="profile-body">
+          <div class="profile-section">
+            <h3 class="section-title"><i class="fas fa-info-circle"></i> Personal Information</h3>
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">Full Name</div><div class="info-value"><%= user ? user.name : 'N/A' %></div></div>
+              <div class="info-item"><div class="info-label">Email Address</div><div class="info-value"><%= user ? user.email : 'N/A' %></div></div>
+              <div class="info-item"><div class="info-label">Phone Number</div><div class="info-value"><%= user ? user.phone : 'N/A' %></div></div>
+              <div class="info-item"><div class="info-label">Role</div><div class="info-value"><%= user ? user.role : 'admin' %></div></div>
+            </div>
+          </div>
+
+          <% if (user && (user.city || user.state || user.country)) { %>
+          <div class="profile-section">
+            <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Location Information</h3>
+            <div class="info-grid">
+              <% if (user.city) { %><div class="info-item"><div class="info-label">City</div><div class="info-value"><%= user.city %></div></div><% } %>
+              <% if (user.state) { %><div class="info-item"><div class="info-label">State</div><div class="info-value"><%= user.state %></div></div><% } %>
+              <% if (user.country) { %><div class="info-item"><div class="info-label">Country</div><div class="info-value"><%= user.country %></div></div><% } %>
+            </div>
+          </div>
+          <% } %>
+
+          <div class="profile-section">
+            <h3 class="section-title"><i class="fas fa-chart-bar"></i> Account Statistics</h3>
+            <div class="info-grid">
+              <div class="info-item"><div class="info-label">Role</div><div class="info-value">Admin</div></div>
+              <div class="info-item"><div class="info-label">Verified</div><div class="info-value"><%= user ? (user.is_verified ? 'Yes' : 'No') : 'N/A' %></div></div>
+              <div class="info-item"><div class="info-label">Joined</div><div class="info-value"><%= user ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %></div></div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <a href="/admin/adminEditForm" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Profile</a>
+            <a href="/admin/dashboard" class="btn btn-secondary"><i class="fas fa-tachometer-alt"></i> Back to Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const mobileToggle = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    mobileToggle.addEventListener('click', function() {
+      sidebar.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (window.innerWidth <= 768) {
+        if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+          sidebar.classList.remove('open');
+        }
+      }
+    });
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.menu-item').forEach(item => {
+      if (item.getAttribute('href') === currentPath) {
+        item.classList.add('active');
+      }
+    });
+  </script>
+</body>
+</html>
+
