@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AllFreelancersPage</title>
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <!-- Libraries Stylesheet -->
+  <link href="home/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="home/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="home/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="my-css/style.css">
+  <style>
+    .freelancers-header {
+      min-height: 93vh;
+      min-width: 182vh;
+      background: url('/home/img/allFreelancerPage.jpg') center/cover no-repeat;
+      display: flex; 
+      align-items: center; 
+      text-align: center;
+      font-weight: bold; 
+      color: #f8f9fa; 
+      padding: 2rem;
+      border-radius: 25px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .freelancers-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color:#f8f9fa;
+    }
+    
+    .freelancers-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .freelancers-container {
+      padding: 60px 0;
+      background-color: #f8f9fa;
+    }
+    
+    .freelancers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .freelancer-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .freelancer-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .freelancer-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .freelancer-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-right: 20px;
+      object-fit: cover;
+      border: 3px solid #e9ecef;
+    }
+    
+    .freelancer-info h3 {
+      color: #2c3e50;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0 0 5px 0;
+    }
+    
+    .freelancer-level {
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: inline-block;
+    }
+    
+    .freelancer-level.expert {
+      background: #dc3545;
+    }
+    
+    .freelancer-level.entry {
+      background: #17a2b8;
+    }
+    
+    .freelancer-bio {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .freelancer-meta {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+    
+    .freelancer-meta li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+    
+    .freelancer-meta li i {
+      margin-right: 8px;
+      width: 16px;
+      color: #6c757d;
+    }
+    
+    .freelancer-skills {
+      margin-bottom: 20px;
+    }
+    
+    .skill-tag {
+      display: inline-block;
+      background: #e9ecef;
+      color: #495057;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .btn-view {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: auto;
+    }
+    
+    .btn-view:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-view:focus {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      outline: none;
+    }
+    
+    .btn-view:active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-view a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .btn-view a:hover {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .btn-view a:focus {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .btn-view a:active {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .no-freelancers {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .no-freelancers i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: #dee2e6;
+    }
+    
+    .no-freelancers h2 {
+      margin-bottom: 10px;
+      color: #495057;
+    }
+  </style>
+</head>
+
+<body data-auth="<%= isAuthenticated ? 'true' : 'false' %>">
+  <!-- NAVBAR -->
+  <%-include("./layouts/navbar") %>
+
+  <!-- FREELANCERS HEADER -->
+  <section class="freelancers-header">
+    <div class="container">
+      <h1>Find Top Talent</h1>
+      <p>Connect with skilled freelancers ready to bring your projects to life</p>
+    </div>
+  </section>
+
+  <!-- FREELANCERS CONTAINER -->
+  <section class="freelancers-container">
+    <div class="container">
+      <!-- Freelancers Grid -->
+      <% if (freelancers && freelancers.length > 0) { %>
+        <div class="freelancers-grid">
+          <% freelancers.forEach(function(freelancer){ %>
+            <div class="freelancer-card">
+              <div class="freelancer-header">
+                <img src="<%= freelancer.profilePic || '/home/img/team-1.jpg' %>" 
+                     alt="Freelancer Avatar" class="freelancer-avatar">
+                <div class="freelancer-info">
+                  <h3><%= freelancer.name %></h3>
+                  <span class="freelancer-level <%= freelancer.experienceLevel || 'intermediate' %>">
+                    <%= (freelancer.experienceLevel || 'intermediate').charAt(0).toUpperCase() + (freelancer.experienceLevel || 'intermediate').slice(1) %>
+                  </span>
+                </div>
+              </div>
+              
+              <% if (freelancer.bio) { %>
+                <div class="freelancer-bio">
+                  <%= freelancer.bio %>
+                </div>
+              <% } %>
+              
+              <ul class="freelancer-meta">
+                <% if (freelancer.hourlyRate) { %>
+                  <li>
+                    <i class="fas fa-dollar-sign"></i>
+                    $<%= freelancer.hourlyRate %>/hour
+                  </li>
+                <% } %>
+                <% if (freelancer.location) { %>
+                  <li>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <%= freelancer.location %>
+                  </li>
+                <% } %>
+                <li>
+                  <i class="fas fa-user-check"></i>
+                  Available for work
+                </li>
+              </ul>
+              
+              <% if (freelancer.skills && freelancer.skills.length > 0) { %>
+                <div class="freelancer-skills">
+                  <% freelancer.skills.forEach(function(skill){ %>
+                    <span class="skill-tag"><%= skill %></span>
+                  <% }); %>
+                </div>
+              <% } %>
+              
+              <button class="btn-view" type="button">
+                <a href="/signin">View Profile</a>
+              </button>
+            </div>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="no-freelancers">
+          <i class="fas fa-users"></i>
+          <h2>No Freelancers Available</h2>
+          <p>Check back later for new talent!</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <footer>
+    <%-include("./layouts/footer") %>
+  </footer>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="home/lib/easing/easing.min.js"></script>
+  <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+  <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+  <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+  <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="home/js/main.js"></script>
+</body>
+
+</html>

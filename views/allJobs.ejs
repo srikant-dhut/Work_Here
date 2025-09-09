@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AllJobsPage</title>
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <!-- Libraries Stylesheet -->
+  <link href="home/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+  <link href="home/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+  <!-- Customized Bootstrap Stylesheet -->
+  <link href="home/css/style.css" rel="stylesheet">
+  <link rel="stylesheet" href="my-css/style.css">
+  <style>
+    .jobs-header {
+      min-height: 93vh;
+      min-width: 182vh;
+      background: url('/home/img/allJobPage1.png') center/cover no-repeat;
+      display: flex; 
+      align-items: center; 
+      text-align: center;
+      font-weight: bold; 
+      color: #f8f9fa; 
+      padding: 2rem;
+      border-radius: 25px;
+      margin-top: 20px;
+    }
+    
+    .jobs-header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color:#f8f9fa;
+    }
+    
+    .jobs-header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    
+    .jobs-container {
+      padding: 60px 0;
+      background-color: #f8f9fa;
+    }
+    
+    .jobs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+    
+    .job-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .job-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .job-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+    
+    .job-card h3 {
+      color: #2c3e50;
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin: 0;
+      flex: 1;
+      margin-right: 15px;
+    }
+    
+    .job-type {
+      background: #28a745;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    
+    .job-type.urgent {
+      background: #dc3545;
+    }
+    
+    .job-description {
+      color: #6c757d;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .job-meta {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+    
+    .job-meta li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+      color: #495057;
+      font-size: 0.9rem;
+    }
+    
+    .job-meta li i {
+      margin-right: 8px;
+      width: 16px;
+      color: #6c757d;
+    }
+    
+    .job-skills {
+      margin-bottom: 20px;
+    }
+    
+    .skill-tag {
+      display: inline-block;
+      background: #e9ecef;
+      color: #495057;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    
+    .job-client {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+    
+    .client-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 12px;
+      object-fit: cover;
+    }
+    
+    .client-info h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #495057;
+    }
+    
+    .client-info p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #6c757d;
+    }
+    
+    .btn-view {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: auto;
+    }
+    
+    .btn-view:hover {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-view:focus {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      outline: none;
+    }
+    
+    .btn-view:active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-view a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .btn-view a:hover {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .btn-view a:focus {
+      color: white;
+      text-decoration: none;
+    }
+    
+    .btn-view a:active {
+      color: white;
+      text-decoration: none;
+    }
+    
+    
+    
+    .no-jobs {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .no-jobs i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      color: #dee2e6;
+    }
+    
+    .no-jobs h2 {
+      margin-bottom: 10px;
+      color: #495057;
+    }
+    
+  </style>
+</head>
+
+<body data-auth="<%= isAuthenticated ? 'true' : 'false' %>">
+  <!-- NAVBAR -->
+  <%-include("./layouts/navbar") %>
+
+  <!-- JOBS HEADER -->
+  <section class="jobs-header">
+    <div class="container">
+      <h1>Find Your Next Project</h1>
+      <p>Discover amazing opportunities from clients around the world</p>
+    </div>
+  </section>
+
+  <!-- JOBS CONTAINER -->
+  <section class="jobs-container">
+    <div class="container">
+      <!-- Jobs Grid -->
+      <% if (openJobs && openJobs.length > 0) { %>
+        <div class="jobs-grid">
+          <% openJobs.forEach(function(job){ %>
+            <div class="job-card">
+              <div class="job-card-header">
+                <h3><%= job.title %></h3>
+                <span class="job-type <%= job.isUrgent ? 'urgent' : '' %>">
+                  <%= job.isUrgent ? 'Urgent' : 'Open' %>
+                </span>
+              </div>
+              
+              <% if (job.description) { %>
+                <div class="job-description">
+                  <%= job.description %>
+                </div>
+              <% } %>
+              
+              <ul class="job-meta">
+                <li>
+                  <i class="fas fa-dollar-sign"></i>
+                  $<%= job.budget && job.budget.min %> - $<%= job.budget && job.budget.max %> <%= job.budget && job.budget.currency %>
+                </li>
+                <li>
+                  <i class="fas fa-user-tie"></i>
+                  <%= job.experienceLevel.charAt(0).toUpperCase() + job.experienceLevel.slice(1) %> Level
+                </li>
+                <% if (job.deadline) { %>
+                  <li>
+                    <i class="fas fa-calendar-alt"></i>
+                    Deadline: <%= new Date(job.deadline).toLocaleDateString() %>
+                  </li>
+                <% } %>
+                <li>
+                  <i class="fas fa-clock"></i>
+                  Posted <%= new Date(job.createdAt).toLocaleDateString() %>
+                </li>
+                <li>
+                  <i class="fas fa-users"></i>
+                  <%= job.totalBids || 0 %> bids
+                </li>
+              </ul>
+              
+              <% if (job.skills && job.skills.length > 0) { %>
+                <div class="job-skills">
+                  <% job.skills.forEach(function(skill){ %>
+                    <span class="skill-tag"><%= skill %></span>
+                  <% }); %>
+                </div>
+              <% } %>
+              
+              <% if (job.client) { %>
+                <div class="job-client">
+                  <img src="<%= job.client.profilePic || '/home/img/team-1.jpg' %>" 
+                       alt="Client Avatar" class="client-avatar">
+                  <div class="client-info">
+                    <h4><%= job.client.name %></h4>
+                    <p>Client</p>
+                  </div>
+                </div>
+              <% } %>
+              
+              <button class="btn-view" type="button">
+                <a href="/signin"> View Job Details</a>
+              </button>
+            </div>
+          <% }); %>
+        </div>
+
+      <% } else { %>
+        <div class="no-jobs">
+          <i class="fas fa-briefcase"></i>
+          <h2>No Open Jobs Available</h2>
+          <p>Check back later for new opportunities!</p>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <footer>
+    <%-include("./layouts/footer") %>
+  </footer>
+  <!-- JavaScript Libraries -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+  <script src="home/lib/easing/easing.min.js"></script>
+  <script src="home/lib/owlcarousel/owl.carousel.min.js"></script>
+  <script src="home/lib/tempusdominus/js/moment.min.js"></script>
+  <script src="home/lib/tempusdominus/js/moment-timezone.min.js"></script>
+  <script src="home/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+  <!-- Template Javascript -->
+  <script src="home/js/main.js"></script>
+</body>
+
+</html>
