@@ -16,6 +16,44 @@
   <!-- Customized Bootstrap Stylesheet -->
   <link href="home/css/style.css" rel="stylesheet">
   <link rel="stylesheet" href="my-css/style.css">
+  <style>
+    .btn-view-all-jobs {
+      background: #14a800;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-view-all-jobs:hover {
+      background: #14a800;
+      color: white;
+      text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-view-all-freelancers {
+      background:#007bff;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-view-all-freelancers:hover {
+      background: #007bff;
+      color: white;
+      text-decoration: none;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+  </style>
 </head>
 
 <body data-auth="<%= isAuthenticated ? 'true' : 'false' %>">
@@ -29,10 +67,10 @@
         <div class="hero-content">
           <h1>Connecting clients in need to freelancers who deliver</h1>
           <p>World-class talent at your fingertips</p>
-          <div class="search-box">
+          <!-- <div class="search-box">
             <input type="text" placeholder="Search for freelancers, jobs..." />
             <button>Search</button>
-          </div>
+          </div> -->
         </div>
       </section>
 
@@ -61,6 +99,12 @@
             </div>
             <% }) %>
         </div>
+        
+        <% if (freelancers && freelancers.length > 0) { %>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="/freelancers" class="btn-view-all-freelancers">View All Freelancers</a>
+          </div>
+        <% } %>
       </section>
 
       <script>
@@ -120,6 +164,12 @@
                   <h1>No open jobs at the moment.</h1>
                   <% } %>
         </div>
+        
+        <% if (openJobs && openJobs.length > 0) { %>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="/jobs" class="btn-view-all-jobs">View All Jobs</a>
+          </div>
+        <% } %>
       </section>
 
       <!-- View button auth guard for Job and Smooth scroll -->
